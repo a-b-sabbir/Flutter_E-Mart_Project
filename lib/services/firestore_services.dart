@@ -75,4 +75,7 @@ class FirestoreServices {
     ]);
     return res;
   }
+  static allProducts(){
+    return firestore.collection(productsCollection).snapshots();
+  }
 }
