@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/lists.dart';
+import 'package:emart_app/controllers/home_controller.dart';
 import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/category_screen/item_details.dart';
 import 'package:emart_app/views/home_screen/components/featured_buttons.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var controller = Get.find<HomeController>();
     print(Colors.black.value);
     return SafeArea(
       child: Container(
@@ -27,13 +29,14 @@ class HomeScreen extends StatelessWidget {
             height: 60,
             color: lightGrey,
             child: TextFormField(
+              controller: controller.searchController,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   filled: true,
                   fillColor: whiteColor,
                   hintText: searchAnything,
                   hintStyle: TextStyle(color: textfieldGrey),
-                  suffixIcon: Icon(Icons.search)),
+                  suffixIcon: Icon(Icons.search).onTap(() {})),
             ),
           ),
           Expanded(
@@ -152,41 +155,68 @@ class HomeScreen extends StatelessWidget {
                           featuredProducts.text
                               .fontFamily(bold)
                               .size(18)
+                              .white
                               .make(),
+                          10.heightBox,
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: List.generate(
-                                  6,
-                                  (index) => Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Image.asset(imgP1,
-                                              width: 150, fit: BoxFit.cover),
-                                          10.heightBox,
-                                          'Laptop, 8GB/1TB'
-                                              .text
-                                              .fontFamily(semibold)
-                                              .color(fontGrey)
-                                              .make(),
-                                          10.heightBox,
-                                          "\$500"
-                                              .text
-                                              .color(redColor)
-                                              .bold
-                                              .size(16)
-                                              .make()
-                                        ],
-                                      )
-                                          .box
-                                          .white
-                                          .roundedSM
-                                          .margin(EdgeInsets.symmetric(
-                                              horizontal: 6))
-                                          .padding(EdgeInsets.all(8))
-                                          .make()),
-                            ),
+                            child: FutureBuilder(
+                                future: FirestoreServices.getFeaturedProducts(),
+                                builder: (context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: loadingIndicator(),
+                                    );
+                                  } else if (snapshot.data!.docs.isEmpty) {
+                                    return "No Featured Product"
+                                        .text
+                                        .white
+                                        .makeCentered();
+                                  } else {
+                                    var featuredData = snapshot.data!.docs;
+
+                                    return Row(
+                                      children: List.generate(
+                                          featuredData.length,
+                                          (index) => Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Image.network(
+                                                      featuredData[index]
+                                                          ['p_imgs'][0],
+                                                      width: 160,
+                                                      height: 220,
+                                                      fit: BoxFit.cover),
+                                                  10.heightBox,
+                                                  '${featuredData[index]['p_name']}'
+                                                      .text
+                                                      .fontFamily(semibold)
+                                                      .color(fontGrey)
+                                                      .make(),
+                                                  10.heightBox,
+                                                  "${featuredData[index]['p_price']}"
+                                                      .numCurrency
+                                                      .text
+                                                      .color(redColor)
+                                                      .bold
+                                                      .size(16)
+                                                      .make()
+                                                ],
+                                              )
+                                                  .box
+                                                  .white
+                                                  .roundedSM
+                                                  .margin(EdgeInsets.symmetric(
+                                                      horizontal: 6))
+                                                  .padding(EdgeInsets.all(8))
+                                                  .make().onTap(() {
+                                                    Get.to(ItemDetails(title: "${featuredData[index]['p_name']}", data: featuredData[index]));
+                                          })),
+                                    );
+                                  }
+                                }),
                           )
                         ]),
                   ),
@@ -211,7 +241,8 @@ class HomeScreen extends StatelessWidget {
                   20.heightBox,
                   StreamBuilder(
                       stream: FirestoreServices.allProducts(),
-                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (!snapshot.hasData) {
                           return loadingIndicator();
                         } else {
@@ -256,7 +287,12 @@ class HomeScreen extends StatelessWidget {
                                     .margin(EdgeInsets.symmetric(horizontal: 6))
                                     .padding(EdgeInsets.all(8))
                                     .make()
-                                    .onTap(() {Get.to(ItemDetails(title: '${allProductsData[index]['p_name']}', data: allProductsData[index]));});
+                                    .onTap(() {
+                                  Get.to(ItemDetails(
+                                      title:
+                                          '${allProductsData[index]['p_name']}',
+                                      data: allProductsData[index]));
+                                });
                               }));
                         }
                       })
