@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'consts/consts.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //? So that all the widgets run once

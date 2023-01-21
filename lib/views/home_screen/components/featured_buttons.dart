@@ -1,4 +1,6 @@
 import 'package:emart_app/consts/consts.dart';
+import 'package:emart_app/views/category_screen/category_details.dart';
+import 'package:get/get.dart';
 
 Widget featuredButtons({
   String? title,
@@ -23,5 +25,8 @@ Widget featuredButtons({
       .outerShadowSm
       .padding(EdgeInsets.all(4))
       .margin(EdgeInsets.symmetric(horizontal: 4))
-      .make();
+      .make()
+      .onTap(() {
+    Get.to(CategoryDetails(title: title));
+  });
 }

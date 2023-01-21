@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:emart_app/consts/lists.dart';
 import 'package:emart_app/controllers/home_controller.dart';
+import 'package:emart_app/controllers/product_controller.dart';
 import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/category_screen/item_details.dart';
 import 'package:emart_app/views/home_screen/components/featured_buttons.dart';
@@ -16,6 +17,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<HomeController>();
+    var controller2 = Get.put(ProductController());
+
     print(Colors.black.value);
     return SafeArea(
       child: Container(
@@ -211,9 +214,13 @@ class HomeScreen extends StatelessWidget {
                                                   .margin(EdgeInsets.symmetric(
                                                       horizontal: 6))
                                                   .padding(EdgeInsets.all(8))
-                                                  .make().onTap(() {
-                                                    Get.to(ItemDetails(title: "${featuredData[index]['p_name']}", data: featuredData[index]));
-                                          })),
+                                                  .make()
+                                                  .onTap(() {
+                                                Get.to(ItemDetails(
+                                                    title:
+                                                        "${featuredData[index]['p_name']}",
+                                                    data: featuredData[index]));
+                                              })),
                                     );
                                   }
                                 }),
