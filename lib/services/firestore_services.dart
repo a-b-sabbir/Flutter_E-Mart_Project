@@ -100,4 +100,8 @@ class FirestoreServices {
         .get();
     //? used get(), because of using FutureBuilder where the method is used
   }
+
+  static searchProducts(title) {
+    return firestore.collection(productsCollection).get();
+  }
 }

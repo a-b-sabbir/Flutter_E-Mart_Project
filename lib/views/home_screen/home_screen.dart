@@ -5,6 +5,7 @@ import 'package:emart_app/controllers/product_controller.dart';
 import 'package:emart_app/services/firestore_services.dart';
 import 'package:emart_app/views/category_screen/item_details.dart';
 import 'package:emart_app/views/home_screen/components/featured_buttons.dart';
+import 'package:emart_app/views/home_screen/search_screen.dart';
 import 'package:emart_app/widgets_common/home_buttons.dart';
 import 'package:emart_app/widgets_common/loading_indication.dart';
 import 'package:get/get.dart';
@@ -39,7 +40,15 @@ class HomeScreen extends StatelessWidget {
                   fillColor: whiteColor,
                   hintText: searchAnything,
                   hintStyle: TextStyle(color: textfieldGrey),
-                  suffixIcon: Icon(Icons.search).onTap(() {})),
+                  suffixIcon: Icon(Icons.search).onTap(() {
+                    if (controller.searchController.text.isNotEmptyAndNotNull) {
+                      Get.to(() => SearchScreen(
+                            title: controller.searchController.text,
+                          ));
+                    } else {
+                      
+                    }
+                  })),
             ),
           ),
           Expanded(
